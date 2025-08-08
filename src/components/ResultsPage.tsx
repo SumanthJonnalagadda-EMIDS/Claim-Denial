@@ -103,7 +103,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
                 Back to Form
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Claim Denial Likelihood Analysis</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Denial Likelihood Analysis</h1>
                 <p className="text-sm text-gray-600 mt-1">Prediction score with actionable fixes for your health claim.</p>
               </div>
             </div>
