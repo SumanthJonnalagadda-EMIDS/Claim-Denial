@@ -1,9 +1,9 @@
-# Healthcare Claim Form & CO97 Denial Analysis
+# Healthcare Claim Form & CO59/97 Denial Analysis with NCCI Edits
 
 This repository contains two main parts:
 
 1. **Healthcare Claim Form** – A React + TypeScript web application for uploading, parsing, previewing, and exporting healthcare claim denial data.
-2. **CO97 Denial Analysis & Validation** – A Python-based toolset leveraging Google ADK + Gemini for validating claims against CO97 denial logic using NCCI PTP edits, modifier rules, and AI-driven analysis.
+2. **CO97 / Modifier 59 Denial Analysis & Validation** – A Python-based toolset leveraging Google ADK + Gemini for validating claims against CO97 denial logic, Modifier 59 rules, and NCCI PTP edits.
 
 ---
 
@@ -52,14 +52,15 @@ See `EMAIL_SERVICE_README.md` for configuration & testing.
 
 ---
 
-## 🏥 CO97 Denial Analysis & Validation
+## 🏥 CO97 & Modifier 59 Denial Analysis with NCCI Edits
 
-A **Google ADK + Python** toolset for analyzing and validating healthcare claims for **CO97 denial risk**.  
+A **Google ADK + Python** toolset for analyzing and validating healthcare claims for **CO97 denial risk** and **Modifier 59 compliance**.  
 Combines **NCCI PTP Edit checks**, **modifier rules**, and **custom LLM prompts** for automated claim evaluation.
 
 ### 🚀 Features
-- **Pairwise CPT Validation**: Checks CPT code combinations against NCCI rules.
-- **Modifier Compliance**: Flags missing/invalid modifiers based on allowed rules.
+- **Pairwise CPT Validation (NCCI Edits)**: Checks CPT code combinations against NCCI PTP rules to flag unbundling.
+- **Modifier 59 Validation**: Identifies when Modifier 59 is required, missing, or inappropriately used.
+- **CO97 Risk Assessment**: Detects contractual obligation denial scenarios.
 - **AI Analysis**: Uses Gemini-based LLM agents for denial risk explanation & recommendations.
 - **Prompt Config via `.env`**: Load analyzer/validator prompts dynamically from GitHub.
 
@@ -72,12 +73,13 @@ Combines **NCCI PTP Edit checks**, **modifier rules**, and **custom LLM prompts*
 ### 📂 Key Components
 - `NCCIEditRules` – Loads and validates CPT pair restrictions from Excel
 - `validate_claim_with_rules()` – Tool for pairwise service line checks
+- `Modifier59Validator` – Logic for Modifier 59 necessity & compliance
 - `CO97ValidatorAgent` – LLM-based validator using prompt-driven reasoning
 - `.env` – Holds API keys and prompt URLs
 
 ### 🔄 Typical Flow
 1. Load NCCI PTP Edit Excel
-2. Validate CPT pairs & modifiers
+2. Validate CPT pairs & modifiers (including Modifier 59 logic)
 3. Pass structured claim to LLM agent
 4. Return risk assessment & recommendations
 
@@ -90,14 +92,14 @@ pip install python-dotenv requests pandas openpyxl google-adk
 ```env
 GOOGLE_GENAI_USE_VERTEXAI=FALSE
 GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
-
-PROMPT_URL_ANALYZER=https://raw.githubusercontent.com/SumanthJonnalagadda-EMIDS/prompts/main/analyzer_prompt.txt
-PROMPT_URL_VALIDATOR=https://raw.githubusercontent.com/SumanthJonnalagadda-EMIDS/prompts/main/validator_prompt.txt
+PROMPT_URL_ANALYZER=https://raw.githubusercontent.com/.../analyzer_prompt.txt
+PROMPT_URL_VALIDATOR=https://raw.githubusercontent.com/.../validator_prompt.txt
 ```
 
 ### 📝 Notes
 - Excel format must follow NCCI PTP Edit structure (skip first 2 rows).
-- Designed for CO97 denial logic but adaptable to other denial codes.
+- Designed for **CO97 denial** and **Modifier 59** compliance but adaptable to other denial codes.
 - Not a replacement for full claim submission systems — focuses on analysis & validation.
+- AI output depends on quality of prompts and NCCI data accuracy.
 
 ---
