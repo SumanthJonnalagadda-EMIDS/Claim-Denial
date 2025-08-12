@@ -5,7 +5,7 @@ import { FormSection } from './components/FormSection';
 import { FormField } from './components/FormField';
 import { FileUpload } from './components/FileUpload';
 import { ResultsPage } from './components/ResultsPage';
-import { LoadingScreen } from './components/LoadingScreen';
+import { LoadingModal } from './components/LoadingScreen';
 import { parseAgentResponse, ParsedResponse } from './utils/responseParser';
 import {
   getInitialFormData,
@@ -74,7 +74,6 @@ function App() {
 
   // --- LOADING SCREEN STATE ---
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [loadingStep, setLoadingStep] = useState<'session' | 'agent' | 'complete'>('session');
 
 
 
@@ -177,7 +176,6 @@ function App() {
 
     // Show loading screen
     setShowLoadingScreen(true);
-    setLoadingStep('session');
 
     // Save the submitted data for display
     setSubmittedData(JSON.stringify(formData, null, 2));
@@ -216,9 +214,6 @@ function App() {
       const sessionData = await sessionRes.json();
       console.log('Session created successfully:', sessionData);
       setApiStatus(prev => ({ ...prev, sessionCreated: true }));
-
-      // Update loading step to agent processing
-      setLoadingStep('agent');
 
       // 2. Run agent
       console.log('Running agent...');
@@ -259,9 +254,6 @@ function App() {
       setApiStatus(prev => ({ ...prev, agentRun: true })); // Set agentRun to true before setting agentResponse
       setAgentResponse(JSON.stringify(runData, null, 2));
 
-      // Update loading step to complete
-      setLoadingStep('complete');
-
       // Parse the response and prepare for results page
       const parsed = parseAgentResponse(JSON.stringify(runData, null, 2));
       setParsedResponse(parsed);
@@ -300,7 +292,6 @@ function App() {
     setShowResultsPage(false);
     setParsedResponse(null);
     setShowLoadingScreen(false);
-    setLoadingStep('session');
     sessionStorage.removeItem('healthcareClaimForm');
   };
 
@@ -316,15 +307,7 @@ function App() {
 
 
 
-  // Show loading screen if processing
-  if (showLoadingScreen) {
-    return (
-      <LoadingScreen
-        currentStep={loadingStep}
-        onComplete={handleLoadingComplete}
-      />
-    );
-  }
+  // (Removed old full-screen LoadingScreen; we now show an overlay modal instead)
 
   // Show results page if available
   if (showResultsPage && parsedResponse) {
@@ -341,6 +324,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      {/* Loading overlay modal */}
+      <LoadingModal
+        isOpen={showLoadingScreen}
+        onComplete={handleLoadingComplete}
+        awaitExternalComplete={true}
+        isAgentDone={apiStatus.agentRun}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -348,7 +338,7 @@ function App() {
             <FileText className="h-8 w-8 text-blue-600 mr-3" />
             <h1 className="text-3xl font-bold text-gray-900">Claim Denial Predictor</h1>
           </div>
-          <p className="text-lg text-gray-600">Predicting denials before they happen – saving time, money, and effort.</p>
+          <p className="text-lg text-gray-600">Predict denials before they happen – saving time, money, and effort.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -1410,7 +1400,7 @@ function App() {
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg">
                   <div className="text-2xl font-bold text-green-600">{validationSummary.validFields}</div>
-                  <div className="text-sm text-green-700">Post Submission Updates</div>
+                  <div className="text-sm text-green-700">Post-Submission Updates</div>
                 </div>
                 <div className="bg-red-50 p-4 rounded-lg">
                   <div className="text-2xl font-bold text-red-600">{validationSummary.invalidFields}</div>
