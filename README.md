@@ -92,8 +92,9 @@ pip install python-dotenv requests pandas openpyxl google-adk
 ```env
 GOOGLE_GENAI_USE_VERTEXAI=FALSE
 GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
-PROMPT_URL_ANALYZER=https://raw.githubusercontent.com/.../analyzer_prompt.txt
-PROMPT_URL_VALIDATOR=https://raw.githubusercontent.com/.../validator_prompt.txt
+
+PROMPT_URL_ANALYZER=https://raw.githubusercontent.com/SumanthJonnalagadda-EMIDS/prompts/main/analyzer_prompt.txt
+PROMPT_URL_VALIDATOR=https://raw.githubusercontent.com/SumanthJonnalagadda-EMIDS/prompts/main/validator_prompt.txt
 ```
 
 ### 📝 Notes
